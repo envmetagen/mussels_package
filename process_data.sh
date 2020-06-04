@@ -58,7 +58,7 @@ msi_time_it "Run7V3_16sBiv:qc" $TIMEMEM_LOG $MSI -c $CONF_FILE -r
 ## change the barcode by ss_sample_id in the results.tsv.gz file (column 1)
 for f in results.tsv.gz running.stats.tsv.gz binres.tsv.gz bin.tsv.gz; do
     nf=$(basename $f .tsv.gz)
-    $MSI_RENAME -i $OUT_FOLDER/$f -I bivalvia_analysis/samplesheet.tsv -N ss_sample_id | gzip -c - > $OUT_FOLDER/$nf.tmp
+    $MSI_RENAME -i $OUT_FOLDER/$f -I samplesheet.tsv -N ss_sample_id | gzip -c - > $OUT_FOLDER/$nf.tmp
     mv $OUT_FOLDER/$nf.tmp $OUT_FOLDER/${nf}_ss_sample_id.tsv.gz
 done
 echo "All done (files in results/)"
