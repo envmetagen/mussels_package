@@ -48,12 +48,12 @@ export PATH=$PWD/scripts:$PATH
 
 
 # First run without blast
-msi_time_it "Run7V3_16sBiv" $TIMEMEM_LOG $MSI -c $CONF_FILE -S
+msi_time_it "8species" $TIMEMEM_LOG $MSI -c $CONF_FILE -S
 
 # now run blast and binning
-msi_time_it "Run7V3_16sBiv:blast" $TIMEMEM_LOG $MSI -c $CONF_FILE
+msi_time_it "8species:blast" $TIMEMEM_LOG $MSI -c $CONF_FILE
 # and fastqc
-msi_time_it "Run7V3_16sBiv:qc" $TIMEMEM_LOG $MSI -c $CONF_FILE -r
+msi_time_it "8species:qc" $TIMEMEM_LOG $MSI -c $CONF_FILE -r
 
 ## change the barcode by ss_sample_id in the results.tsv.gz file (column 1)
 for f in results.tsv.gz running.stats.tsv.gz binres.tsv.gz bin.tsv.gz; do
@@ -62,4 +62,35 @@ for f in results.tsv.gz running.stats.tsv.gz binres.tsv.gz bin.tsv.gz; do
     mv $OUT_FOLDER/$nf.tmp $OUT_FOLDER/${nf}_ss_sample_id.tsv.gz
 done
 echo "All done (files in results/)"
-exit
+
+## Comment (add # to the beggining of the line) the following line to get the reslts using NCBI's full nt db
+exit 0
+##
+## 
+OUT_FOLDER=results_nt
+TIMEMEM_LOG=$OUT_FOLDER/time_mem.log
+mkdir -p $OUT_FOLDER/
+
+CONF_FILE=msi_full_nt.conf
+
+set +x
+
+export PATH=$PWD/scripts:$PATH
+
+
+# First run without blast
+msi_time_it "nt" $TIMEMEM_LOG $MSI -c $CONF_FILE -S
+
+# now run blast and binning
+msi_time_it "nt:blast" $TIMEMEM_LOG $MSI -c $CONF_FILE
+# and fastqc
+msi_time_it "nt:qc" $TIMEMEM_LOG $MSI -c $CONF_FILE -r
+
+## change the barcode by ss_sample_id in the results.tsv.gz file (column 1)
+for f in results.tsv.gz running.stats.tsv.gz binres.tsv.gz bin.tsv.gz; do
+    nf=$(basename $f .tsv.gz)
+    $MSI_RENAME -i $OUT_FOLDER/$f -I samplesheet.tsv -N ss_sample_id | gzip -c - > $OUT_FOLDER/$nf.tmp
+    mv $OUT_FOLDER/$nf.tmp $OUT_FOLDER/${nf}_ss_sample_id.tsv.gz
+done
+
+exit 0
